@@ -1,0 +1,6 @@
+{
+  "name": "ডকুমেন্ট সংশোধন সেবা (NID ও জন্ম নিবন্ধন)",
+  "description": "জাতীয় পরিচয়পত্র (NID), জন্ম নিবন্ধন এবং সরকারি সকল প্রকার ডকুমেন্টের ভুল সংশোধন ও অনলাইন আবেদন ব্যবস্থাপনা সফটওয়্যার।",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
