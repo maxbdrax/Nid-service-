@@ -27,6 +27,12 @@ import { OrderReceiptModal } from './components/OrderReceiptModal';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
 import { AdminLoginModal } from './components/AdminLoginModal';
+import { 
+  testConnection, 
+  signOutFromFirebase, 
+  subscribeToRealtimeSettings, 
+  subscribeToRealtimeUser 
+} from './firebase';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -70,8 +76,32 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    testConnection();
     refreshGlobalData();
+
+    // Subscribe to real-time settings changes from Firestore
+    const unsubscribeSettings = subscribeToRealtimeSettings((newGateways) => {
+      setGateways(newGateways);
+    });
+
+    return () => {
+      unsubscribeSettings();
+    };
   }, [refreshGlobalData]);
+
+  // Real-time user listener when currentUser is logged in
+  useEffect(() => {
+    if (!currentUser?.id) return;
+    const unsubscribeUser = subscribeToRealtimeUser(currentUser.id, (updatedUser) => {
+      setCurrentUser((prev) => {
+        if (!prev) return updatedUser;
+        return { ...prev, ...updatedUser };
+      });
+    });
+    return () => {
+      unsubscribeUser();
+    };
+  }, [currentUser?.id]);
 
   // Auth Handlers
   const handleAuthSuccess = (user: User) => {
@@ -81,6 +111,7 @@ export default function App() {
   };
 
   const handleLogout = () => {
+    signOutFromFirebase().catch(() => {});
     setStoredUserId(null);
     setCurrentUser(null);
     setActiveTab('services');

@@ -1,0 +1,96 @@
+{
+  "entities": {
+    "user": {
+      "title": "User",
+      "description": "User profile with role and wallet balance",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "balance": { "type": "number" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "role", "balance"]
+    },
+    "order": {
+      "title": "CorrectionOrder",
+      "description": "Correction application order for government documents",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "trackingId": { "type": "string", "maxLength": 50 },
+        "userId": { "type": "string" },
+        "userName": { "type": "string", "maxLength": 100 },
+        "userPhone": { "type": "string", "maxLength": 30 },
+        "serviceId": { "type": "string" },
+        "serviceName": { "type": "string", "maxLength": 150 },
+        "serviceType": { "type": "string" },
+        "deliverySpeed": { "type": "string", "enum": ["regular", "urgent"] },
+        "fee": { "type": "number" },
+        "applicantName": { "type": "string", "maxLength": 100 },
+        "applicantPhone": { "type": "string", "maxLength": 30 },
+        "applicantAddress": { "type": "string", "maxLength": 500 },
+        "documentNumber": { "type": "string", "maxLength": 100 },
+        "currentInfo": { "type": "string", "maxLength": 2000 },
+        "correctedInfo": { "type": "string", "maxLength": 2000 },
+        "status": { "type": "string", "enum": ["pending", "verified", "processing", "completed", "rejected"] },
+        "adminRemarks": { "type": "string", "maxLength": 1000 },
+        "deliveryRef": { "type": "string", "maxLength": 100 },
+        "deliveryUrl": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "trackingId", "userId", "serviceId", "serviceName", "fee", "status"]
+    },
+    "deposit": {
+      "title": "DepositRequest",
+      "description": "Add money deposit transaction via bKash, Nagad, or Rocket",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "trackingId": { "type": "string", "maxLength": 50 },
+        "userId": { "type": "string" },
+        "userName": { "type": "string", "maxLength": 100 },
+        "userPhone": { "type": "string", "maxLength": 30 },
+        "method": { "type": "string", "enum": ["bkash", "nagad", "rocket"] },
+        "amount": { "type": "number" },
+        "senderPhone": { "type": "string", "maxLength": 30 },
+        "transactionId": { "type": "string", "maxLength": 100 },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "trackingId", "userId", "method", "amount", "transactionId", "status"]
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Application settings including payment gateway numbers and support contact",
+      "type": "object",
+      "properties": {
+        "gateways": { "type": "object" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["gateways"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "user",
+      "description": "User profiles and wallet balances"
+    },
+    "/orders/{orderId}": {
+      "schema": "order",
+      "description": "User document correction applications"
+    },
+    "/deposits/{depositId}": {
+      "schema": "deposit",
+      "description": "Wallet recharge deposit requests"
+    },
+    "/settings/{settingId}": {
+      "schema": "settings",
+      "description": "Global gateway configurations"
+    }
+  }
+}

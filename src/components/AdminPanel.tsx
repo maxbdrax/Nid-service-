@@ -35,6 +35,7 @@ import type {
 } from '../types';
 import { api } from '../api';
 import { AdminAddFunds } from './AdminAddFunds';
+import { updateOrderStatusInFirestore, updateGatewaysInFirestore } from '../firebase';
 
 interface AdminPanelProps {
   onRefreshAll: () => void;
@@ -151,6 +152,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onRefreshAll, onAdminLog
         deliveryReferenceNumber: deliveryRef,
         deliveryDocumentUrl: deliveryUrl,
       });
+
+      try {
+        await updateOrderStatusInFirestore(
+          selectedOrder.id,
+          orderStatusToUpdate,
+          adminRemarks,
+          deliveryRef,
+          deliveryUrl
+        );
+      } catch (fbErr) {
+        console.warn('Firestore order status sync:', fbErr);
+      }
+
       showFeedback(res.message);
       setSelectedOrder(null);
       loadAllAdminData();
@@ -180,13 +194,21 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onRefreshAll, onAdminLog
   const handleSaveGateways = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await api.updateGateways({
+      const updatedGateways = {
         bkash: { active: true, number: bkashNumber.trim(), type: bkashType, feeNotice: bkashNotice },
         nagad: { active: true, number: nagadNumber.trim(), type: nagadType, feeNotice: nagadNotice },
         rocket: { active: true, number: rocketNumber.trim(), type: rocketType, feeNotice: rocketNotice },
         supportPhone: supportPhone.trim(),
         noticeText: noticeText.trim(),
-      });
+      };
+      const res = await api.updateGateways(updatedGateways);
+
+      try {
+        await updateGatewaysInFirestore(updatedGateways);
+      } catch (fbErr) {
+        console.warn('Firestore gateways sync:', fbErr);
+      }
+
       showFeedback(res.message);
       loadAllAdminData();
       onRefreshAll();

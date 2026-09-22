@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import type { ServiceItem, User, AttachedDoc, Order } from '../types';
 import { api } from '../api';
+import { saveOrderToFirestore } from '../firebase';
 
 interface ApplicationModalProps {
   isOpen: boolean;
@@ -120,6 +121,12 @@ export const ApplicationModal: React.FC<ApplicationModalProps> = ({
         attachedFiles,
         userEmail
       });
+
+      try {
+        await saveOrderToFirestore(res.order);
+      } catch (fbErr) {
+        console.warn('Firestore order sync:', fbErr);
+      }
 
       setSubmittedOrder(res.order);
       onOrderSuccess(res.order, res.remainingBalance);

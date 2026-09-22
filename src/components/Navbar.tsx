@@ -166,13 +166,25 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
 
                 {/* User Menu / Logout */}
-                <div className="flex items-center gap-1.5 pl-1 border-l border-slate-200">
+                <div className="flex items-center gap-2 pl-1 border-l border-slate-200">
+                  {currentUser.photoURL ? (
+                    <img 
+                      src={currentUser.photoURL} 
+                      alt={currentUser.name} 
+                      referrerPolicy="no-referrer"
+                      className="w-7 h-7 rounded-full border border-emerald-300 object-cover"
+                    />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center">
+                      {currentUser.name.slice(0, 1)}
+                    </div>
+                  )}
                   <div className="hidden lg:flex flex-col text-right">
                     <span className="text-xs font-semibold text-slate-800 leading-tight max-w-[120px] truncate">
                       {currentUser.name}
                     </span>
                     <span className="text-[10px] text-slate-500 leading-none">
-                      {currentUser.phone}
+                      {currentUser.phone || currentUser.email || 'ব্যবহারকারী'}
                     </span>
                   </div>
 
@@ -180,7 +192,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     id="user-logout-btn"
                     onClick={onLogout}
                     title="লগআউট"
-                    className="p-2 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    className="p-2 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                   >
                     <LogOut className="w-4 h-4" />
                   </button>

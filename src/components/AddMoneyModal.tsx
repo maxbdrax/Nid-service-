@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import type { PaymentGateways, PaymentMethod, User } from '../types';
 import { api } from '../api';
+import { saveDepositToFirestore } from '../firebase';
 
 interface AddMoneyModalProps {
   isOpen: boolean;
@@ -83,6 +84,12 @@ export const AddMoneyModal: React.FC<AddMoneyModalProps> = ({
         amount: numAmount,
         trxId: trxId.trim()
       });
+
+      try {
+        await saveDepositToFirestore(res.deposit);
+      } catch (fbErr) {
+        console.warn('Firestore deposit sync:', fbErr);
+      }
 
       setSuccessMessage(res.message);
       onDepositSuccess(res.deposit);
